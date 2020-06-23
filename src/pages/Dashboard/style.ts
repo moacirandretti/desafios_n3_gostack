@@ -35,14 +35,14 @@ export const Form = styled.form`
 		width: 210px;
 		height: 70px;
 		border-radius: 0 5px 5px 0;
-		background: #04d361;
+		background: #f52917;
 		border: 0;
 		color: #fff;
 		font-weight: 700;
 		transition: background-color 0.6s;
 
 		&:hover {
-			background: ${shade(0.2, '#04d361')};
+			background: ${shade(0.2, '#F52917')};
 		}
 	}
 `
@@ -78,7 +78,7 @@ export const Repository = styled.div`
 		}
 
 		div {
-			margin-left: 16px;
+			margin: 0 16px;
 			strong {
 				font-size: 20px;
 				color: #3d3d4d;

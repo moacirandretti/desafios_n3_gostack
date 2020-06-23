@@ -1,61 +1,68 @@
-import React from 'react'
+import React, { useState, FormEvent } from 'react'
+import api from '../../services/api'
 import logoImg from '../../assets/logo.svg'
-import { Title, Form, Repository } from './style'
 import { FiChevronRight } from 'react-icons/fi'
+import { Title, Form, Repository } from './style'
+
+interface Repository {
+	full_name: string
+	description: string
+	html_url: string
+	owner: {
+		login: string
+		avatar_url: string
+	}
+}
 
 const Dashboard: React.FC = () => {
+	const [repositories, setRepositories] = useState<Repository[]>([])
+	const [newRepo, setNewRepo] = useState('')
+
+	async function handleAddRespository(
+		event: FormEvent<HTMLFormElement>
+	): Promise<void> {
+		event.preventDefault()
+		const response = await api.get<Repository>(`repos/${newRepo}`)
+		console.log(response.data)
+
+		const repository = response.data
+		setRepositories([...repositories, repository])
+		setNewRepo('')
+	}
+
 	return (
 		<>
 			<img src={logoImg} alt="GitHub Explorer" />
 			<Title>Explore repositórios no GitHub</Title>
 
-			<Form>
-				<input placeholder="Digite o nome do repositório" />
+			<Form onSubmit={handleAddRespository}>
+				<input
+					value={newRepo}
+					placeholder="Digite o nome do repositório"
+					onChange={(e) => setNewRepo(e.target.value)}
+				/>
 				<button type="submit">Pesquisar</button>
 			</Form>
 
 			<Repository>
-				<a href="#">
-					<img
-						src="https://avatars1.githubusercontent.com/u/61529411?s=460&u=16cf6d51da44c338f89183b7d97e72a10fffa15a&v=4"
-						alt="Alt"
-					/>
+				{repositories.map((repository) => (
+					<a
+						key={repository.full_name}
+						href={`https://github.com/${repository.full_name}`}
+					>
+						<img
+							src={repository.owner.avatar_url}
+							alt={repository.owner.login}
+						/>
 
-					<div>
-						<strong>Login System Address</strong>
-						<p>Simple CRUD system with JS, React JS and JSON Server</p>
-					</div>
+						<div>
+							<strong>{repository.full_name}</strong>
+							<p>{repository.description}</p>
+						</div>
 
-					<FiChevronRight size={20} />
-				</a>
-
-				<a href="#">
-					<img
-						src="https://avatars1.githubusercontent.com/u/61529411?s=460&u=16cf6d51da44c338f89183b7d97e72a10fffa15a&v=4"
-						alt="Alt"
-					/>
-
-					<div>
-						<strong>Login System Address</strong>
-						<p>Simple CRUD system with JS, React JS and JSON Server</p>
-					</div>
-
-					<FiChevronRight size={20} />
-				</a>
-
-				<a href="#">
-					<img
-						src="https://avatars1.githubusercontent.com/u/61529411?s=460&u=16cf6d51da44c338f89183b7d97e72a10fffa15a&v=4"
-						alt="Alt"
-					/>
-
-					<div>
-						<strong>Login System Address</strong>
-						<p>Simple CRUD system with JS, React JS and JSON Server</p>
-					</div>
-
-					<FiChevronRight size={20} />
-				</a>
+						<FiChevronRight size={20} />
+					</a>
+				))}
 			</Repository>
 		</>
 	)
